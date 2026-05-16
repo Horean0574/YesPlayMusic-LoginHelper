@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>YesPlayMusic · 网易云登录助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    .glass-card {
+      max-width: 780px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 2.5rem;
+      padding: 2rem 2rem 2.2rem;
+      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f0f3fa;
+      transition: all 0.2s ease;
+    }
+
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 1.9rem;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.25rem;
+      color: white;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #b9c6e0;
+      margin-bottom: 2rem;
+      border-left: 3px solid #ff4d6d;
+      padding-left: 1rem;
+      font-weight: 400;
+      background: linear-gradient(90deg, rgba(255,77,109,0.15), transparent);
+    }
+
+    .step-indicator {
+      background: rgba(10, 15, 30, 0.55);
+      border-radius: 2rem;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 1.8rem;
+      color: #cbd5e8;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .step-indicator span {
+      background: #ff4d6d;
+      color: white;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-right: 4px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #eaeef9;
+      resize: vertical;
+      outline: none;
+      backdrop-filter: blur(8px);
+      transition: border 0.2s, box-shadow 0.2s;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      margin: 0.8rem 0 1.2rem;
+    }
+
+    textarea:focus {
+      border-color: #ff4d6d;
+      box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.4);
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin: 1.5rem 0 1.8rem;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.8rem 1.8rem;
+      border-radius: 2.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.25s;
+      letter-spacing: 0.3px;
+      background: rgba(20, 25, 45, 0.7);
+    }
+
+    .btn-primary {
+      background: #ff4d6d;
+      border: 1px solid #ff4d6d;
+      box-shadow: 0 8px 18px -6px rgba(255, 77, 109, 0.5);
+      color: white;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: #ff3355;
+      border-color: #ff3355;
+      box-shadow: 0 10px 22px -6px #ff4d6dcc;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: #ff2850;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .script-preview {
+      background: #0b0e17;
+      border-radius: 1.3rem;
+      padding: 0.3rem;
+      margin: 1.2rem 0 0.8rem;
+      border: 1px solid #2d3148;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      color: #9aa4bf;
+    }
+
+    pre {
+      background: #03050a;
+      border-radius: 1rem;
+      padding: 1rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      color: #cfd9f0;
+      max-height: 200px;
+      margin: 0 0.5rem 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .alert {
+      background: rgba(255, 193, 7, 0.12);
+      border-left: 4px solid #ffb347;
+      padding: 0.8rem 1.2rem;
+      border-radius: 1rem;
+      margin: 1.4rem 0 0.8rem;
+      font-size: 0.9rem;
+      color: #ffdfa7;
+      backdrop-filter: blur(8px);
+    }
+
+    .success-message {
+      color: #9bffb3;
+      background: rgba(46, 213, 115, 0.12);
+      border-left: 4px solid #2ed573;
+      padding: 0.8rem 1.2rem;
+      border-radius: 1rem;
+      margin-top: 1rem;
+    }
+
+    hr {
+      border-color: rgba(255,255,255,0.1);
+      margin: 1.8rem 0 1rem;
+    }
+
+    .footer-note {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      font-size: 0.8rem;
+      color: #8892b0;
+    }
+
+    a {
+      color: #ff8c94;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-card">
+    <h1>
+      🎵 YesPlayMusic
+      <span style="font-size: 1.2rem; margin-left: 0.2rem;">· 网易云登录桥</span>
+    </h1>
+    <div class="subtitle">
+      无法登录？从网页版提取Cookie，安全注入
+    </div>
+
+    <div class="step-indicator">
+      <span>1</span> 获取网易云Cookie → <span>2</span> 粘贴至下方 → <span>3</span> 生成脚本 → <span>4</span> 在YesPlayMusic控制台运行
+    </div>
+
+    <label style="font-weight: 500; display: flex; align-items: center; gap: 4px;">
+      🍪 你的网易云音乐 Cookie
+      <span style="font-size:0.75rem; color:#aaa;">(从 music.163.com 请求头完整复制)</span>
+    </label>
+    <textarea id="cookieInput" placeholder="请粘贴从浏览器开发者工具中复制的完整Cookie字符串...&#10;例如：MUSIC_U=xxxx; __csrf=yyyy; ..."></textarea>
+
+    <div class="button-group">
+      <button class="btn" id="clearBtn">
+        🧹 清空
+      </button>
+      <button class="btn btn-primary" id="generateBtn">
+        ⚡ 生成注入脚本
+      </button>
+      <button class="btn" id="copyScriptBtn" style="display: none;">
+        📋 复制脚本
+      </button>
+    </div>
+
+    <!-- 生成的脚本显示区域 -->
+    <div id="scriptContainer" style="display: none;">
+      <div class="script-preview">
+        <div class="code-header">
+          <span>🔧 自动注入脚本 (已嵌入你的Cookie)</span>
+          <span style="color: #ffb86c;">适用于YesPlayMusic控制台</span>
+        </div>
+        <pre id="scriptDisplay"></pre>
+      </div>
+      <div class="alert">
+        ⚠️ <strong>使用方法：</strong> 打开YesPlayMusic页面，按 <kbd>F12</kbd> 打开控制台(Console)，粘贴脚本并回车。页面将自动刷新登录。
+      </div>
+    </div>
+
+    <div id="statusMessage" style="min-height: 2rem; margin-top: 0.5rem;"></div>
+
+    <hr>
+    <div class="footer-note">
+      <div style="display: flex; gap: 1.2rem; flex-wrap: wrap;">
+        <span>🔐 基于原作者 <a href="https://github.com/LuorixDev" target="_blank">LuorixDev</a> GPL3</span>
+        <span>🎨 <a href="https://github.com/LuorixDev/AMLL-YesPlayMusic-Sync" target="_blank">AMLL 同步项目</a></span>
+      </div>
+      <span style="display: flex; gap: 0.6rem;">
+        <span>💡 本地处理 · 不上传数据</span>
+      </span>
+    </div>
+    <div style="font-size:0.7rem; margin-top:0.6rem; color:#6b7290; text-align:right;">
+      灵感来源：YesPlayMusic 社区方案
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // DOM 元素
+      const cookieTextarea = document.getElementById('cookieInput');
+      const generateBtn = document.getElementById('generateBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const copyScriptBtn = document.getElementById('copyScriptBtn');
+      const scriptContainer = document.getElementById('scriptContainer');
+      const scriptDisplay = document.getElementById('scriptDisplay');
+      const statusDiv = document.getElementById('statusMessage');
+
+      // 基础脚本模板（保持原逻辑，使用占位符替换cookie）
+      const scriptTemplate = `(async () => {
+    /* ====== 脚本作者Github LuorixDev GPL3 ====== */
+    /* ====== 替换为你自己的 Cookie 字符串 ====== */
+    const newCookieString = \`__COOKIE_PLACEHOLDER__\`; 
+
+    /* === 0. 清除现有 Cookie === */
+    console.log("🚿 [0] 清空可写 Cookie …");
+    const currentCookies = document.cookie.split(";").filter(Boolean);
+    if (currentCookies.length === 0) {
+        console.log("⚪ 当前无可清除 Cookie。");
+    } else {
+        for (const kv of currentCookies) {
+            const name = kv.split("=")[0].trim();
+            document.cookie = \`\${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/\`;
+            console.log("🗑️ 删除:", name);
+        }
+        console.log("✅ Cookie 清除完成（HttpOnly Cookie 不可移除）。");
+    }
+
+    /* === 1. 写入新 Cookie === */
+    console.log("📥 [1] 写入新 Cookie …");
+    const maxAgeSeconds = 60*60*24*15; 
+    for (const cookie of newCookieString.split(";")) {
+        const c = cookie.trim();
+        if (!c) continue;
+
+        const [key, ...rest] = c.split("=");
+        const value = rest.join("=");
+        if (!key || !value) continue;
+
+        const encoded = \`\${key}=\${encodeURIComponent(value)}; path=/; max-age=\${maxAgeSeconds}\`;
+        document.cookie = encoded;
+        console.log("🍪 写入持久 Cookie:", encoded);
+
+        // 同步写入 localStorage
+        localStorage.setItem(\`cookie-\${key}\`, value);
+        console.log(\`💾 localStorage 写入: cookie-\${key} = \${value}\`);
+    }
+    console.log("✅ 新 Cookie 写入完成。");
+
+    /* === 2. 获取用户信息 === */
+    console.log("🌐 [2] 正在请求 /api/user/account …");
+    let payload;
+    try {
+        const res = await fetch("/api/user/account", { credentials: "include" });
+        payload = await res.json();
+        console.log("📦 返回数据:", payload);
+    } catch (e) {
+        console.error("❌ 请求失败:", e);
+        return;
+    }
+    if (payload.code !== 200 || !payload.profile) {
+        console.error("❌ 响应异常:", payload);
+        return;
+    }
+    const profile = payload.profile;
+    console.log(\`✅ 获取成功，昵称: \${profile.nickname}\`);
+
+    /* === 3. 更新 localStorage.data === */
+    console.log("📂 [3] 读取 localStorage.data …");
+    let oldData;
+    try {
+        oldData = JSON.parse(localStorage.getItem("data") || "{}");
+        console.log("📄 当前 data:", oldData);
+    } catch {
+        console.warn("⚠️ 当前 data 解析失败，将重置为空对象。");
+        oldData = {};
+    }
+
+    const newData = {
+        ...oldData,
+        user: profile,
+        loginMode: "account"
+    };
+
+    try {
+        localStorage.setItem("data", JSON.stringify(newData));
+        console.log("✅ [4] 新 data 写入完成:", newData);
+    } catch (e) {
+        console.error("❌ localStorage 写入失败:", e);
+        return;
+    }
+
+    /* === 5. 跳转至首页 === */
+    console.log("🏠 正在跳转到首页 …");
+    setTimeout(() => {
+        location.href = "/"; 
+    }, 1000);
+})();`;
+
+      // 显示状态消息
+      function setStatus(text, isSuccess = false) {
+        statusDiv.innerHTML = '';
+        if (!text) return;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = isSuccess ? 'success-message' : 'alert';
+        msgDiv.textContent = text;
+        statusDiv.appendChild(msgDiv);
+      }
+
+      // 清除状态和隐藏脚本区
+      function resetUI(keepCookie = false) {
+        if (!keepCookie) {
+          cookieTextarea.value = '';
+        }
+        scriptContainer.style.display = 'none';
+        copyScriptBtn.style.display = 'none';
+        scriptDisplay.textContent = '';
+        setStatus('');
+      }
+
+      // 验证cookie输入
+      function validateCookie(cookieStr) {
+        const trimmed = cookieStr.trim();
+        if (!trimmed) return { valid: false, reason: 'Cookie不能为空' };
+        if (trimmed.length < 10) return { valid: false, reason: 'Cookie太短，请复制完整值' };
+        // 简单检查是否包含常见键或等号分隔
+        if (!trimmed.includes('=')) return { valid: false, reason: 'Cookie格式错误，应包含键值对' };
+        // 建议包含 MUSIC_U 或 __csrf (非强制，但提醒)
+        return { valid: true, cleaned: trimmed };
+      }
+
+      // 生成并显示脚本
+      function generateScript() {
+        const rawCookie = cookieTextarea.value;
+        const validation = validateCookie(rawCookie);
+        
+        if (!validation.valid) {
+          setStatus(`❌ ${validation.reason}`, false);
+          scriptContainer.style.display = 'none';
+          copyScriptBtn.style.display = 'none';
+          return;
+        }
+
+        // 使用原始cookie字符串，但转义模板字面量中的反引号以防破坏脚本
+        const safeCookie = validation.cleaned.replace(/`/g, '\\`').replace(/\\/g, '\\\\').replace(/\$/g, '\\$');
+        // 注意：在模板字面量中我们使用了占位符替换，这里直接构建最终脚本
+        const finalScript = scriptTemplate.replace('__COOKIE_PLACEHOLDER__', safeCookie);
+        
+        scriptDisplay.textContent = finalScript;
+        scriptContainer.style.display = 'block';
+        copyScriptBtn.style.display = 'inline-flex';
+        setStatus('✅ 脚本已生成！点击“复制脚本”后粘贴到YesPlayMusic控制台。', true);
+      }
+
+      // 复制脚本到剪贴板
+      async function copyScriptToClipboard() {
+        const scriptText = scriptDisplay.textContent;
+        if (!scriptText) {
+          setStatus('没有可复制的脚本', false);
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(scriptText);
+          setStatus('📋 脚本已复制到剪贴板！前往YesPlayMusic控制台粘贴运行。', true);
+          // 临时改变按钮文字
+          copyScriptBtn.textContent = '✅ 已复制';
+          setTimeout(() => {
+            if (copyScriptBtn) copyScriptBtn.textContent = '📋 复制脚本';
+          }, 2000);
+        } catch (err) {
+          setStatus('❌ 复制失败，请手动选中脚本复制', false);
+        }
+      }
+
+      // 事件绑定
+      generateBtn.addEventListener('click', generateScript);
+      
+      clearBtn.addEventListener('click', () => {
+        resetUI(false);
+        setStatus('🧽 已清空，可以粘贴新Cookie');
+      });
+
+      copyScriptBtn.addEventListener('click', copyScriptToClipboard);
+
+      // 可选：在粘贴时自动去除前后空格
+      cookieTextarea.addEventListener('paste', (e) => {
+        // 不做额外处理，但可以在生成时trim
+      });
+
+      // 初始化：给出友好提示
+      setStatus('👋 从网易云网页版复制Cookie，粘贴到上方文本框。', false);
+
+      // 如果用户尝试直接回车，不触发表单提交（无表单）
+      cookieTextarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+          e.preventDefault();
+          generateScript();
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>
